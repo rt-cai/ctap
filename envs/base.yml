@@ -6,6 +6,5 @@ dependencies:
   - nextflow=24.04
   - scanpy=1.10
   - anndata=0.10
-  - pydeseq2
   - jupyter
   - notebook

@@ -1,0 +1,1 @@
+works, but needs ~80gb of memory and GPU to be any good

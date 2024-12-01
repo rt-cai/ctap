@@ -1,14 +1,18 @@
 ARG CONDA_ENV=for_container
 
-FROM condaforge/miniforge3
 # https://mamba.readthedocs.io/en/latest/user_guide/mamba.html
-
+FROM condaforge/miniforge3
 # scope var from global
-ARG PACKAGE
 ARG CONDA_ENV
 COPY ./envs/base.yml /opt/env.yml
 RUN --mount=type=cache,target=/opt/conda/pkgs \
     mamba env create -n ${CONDA_ENV} --no-default-packages -f /opt/env.yml
+
+# I believe this is to avoid permission issues with 
+# manipulating added files to places like /opt
+RUN old_umask=`umask` \
+    && umask 0000 \
+    && umask $old_umask
 
 # # use a smaller runtime image
 # # jammy is ver. 22.04 LTS
