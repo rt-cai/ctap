@@ -167,7 +167,7 @@ case $1 in
             # --bind ./:/ws \
             # --workdir /ws \
         apptainer run \
-            docker://$DOCKER_IMAGE:$VER run $@
+            docker://$DOCKER_IMAGE:$VER ctap $@
     ;;
 
     -td)
@@ -178,7 +178,7 @@ case $1 in
             -u $(id -u):$(id -g) \
             --mount type=bind,source="./",target="/ws"\
             --workdir="/ws" \
-            $DOCKER_IMAGE:$VER run $@
+            $DOCKER_IMAGE:$VER ctap $@
     ;;
 
     ###################################################

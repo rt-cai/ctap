@@ -89,6 +89,7 @@ process compare_cell_populations {
     path "compare_cell_populations.png"
 
     """
+    export PYTHONPATH=${projectDir}:PYTHONPATH
     python ${params.steps}/${task.process}.py ${adata}
     """
 }
