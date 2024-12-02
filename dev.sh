@@ -159,7 +159,10 @@ case $1 in
     # test
 
     -t)
-        echo "no tests yet"
+        shift
+        mkdir -p ./scratch/docker
+        cd ./scratch/docker
+        docker run -it $DOCKER_IMAGE:$VER run $@
     ;;
 
     ###################################################
