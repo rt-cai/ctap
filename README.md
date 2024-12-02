@@ -65,6 +65,7 @@ docker run -it --rm \
 Explanation of arguments:
 - `-it` specifies that ctap requires an interactive (`-i`) tty (`-t`) terminal so that nextflow's outputs are displayed correctly
 - `--rm` removes the container instance after execution (the image is retained). Docker creates a new instance of the container image each time it is used.
+- `-u $(id -u):$(id -g)` run as current user instead of the default `root` user
 - `--mount type=bind,source="./",target="/ws"` mount the current working directory (`./`) as `/ws` in the container
 - `--workdir="/ws" \` after entering the container, set the current working directoy to `/ws`
 - use the container image `quay.io/rtcai/ctap`
