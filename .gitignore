@@ -1,4 +1,6 @@
 /data
+/main/scanpy/data
 __pycache__
 cache
 /scratch
+*.sif

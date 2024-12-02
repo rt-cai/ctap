@@ -149,10 +149,12 @@ case $1 in
     -rs) # apptainer
             # -e XDG_CACHE_HOME="/ws"\
         shift
+        mkdir -p ./scratch/docker
+        cd ./scratch/docker
         apptainer exec \
             --bind ./:/ws \
             --workdir /ws \
-            $HERE/$NAME.sif /bin/bash
+            docker://$DOCKER_IMAGE:$VER /bin/bash
     ;;
 
     ###################################################
@@ -162,7 +164,21 @@ case $1 in
         shift
         mkdir -p ./scratch/docker
         cd ./scratch/docker
-        docker run -it $DOCKER_IMAGE:$VER run $@
+            # --bind ./:/ws \
+            # --workdir /ws \
+        apptainer run \
+            docker://$DOCKER_IMAGE:$VER run $@
+    ;;
+
+    -td)
+        shift
+        mkdir -p ./scratch/docker
+        cd ./scratch/docker
+        docker run -it --rm \
+            -u $(id -u):$(id -g) \
+            --mount type=bind,source="./",target="/ws"\
+            --workdir="/ws" \
+            $DOCKER_IMAGE:$VER run $@
     ;;
 
     ###################################################
