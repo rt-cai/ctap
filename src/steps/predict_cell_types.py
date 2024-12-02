@@ -49,6 +49,6 @@ ax = sc.pl.umap(adata, color='cell_type', s=5, title="Cell Type", show=False)
 ax.figure.set_figwidth(6)
 ax.figure.set_figheight(6)
 
-ax.figure.savefig('umap_celltypes.png', dpi=300)
+ax.figure.savefig('umap_celltypes.png', dpi=300, bbox_inches='tight')
 out_path = f"adata.{Path(__file__).stem}.h5ad"
 adata.write(out_path)

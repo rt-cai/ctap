@@ -6,7 +6,12 @@ import warnings
 
 from local.figures.template import BaseFigure, ApplyTemplate, go
 from local.figures.colors import Color, COLORS, Palettes
+import plotly.io as pio
 
+pio.kaleido.scope.chromium_args += (
+    "--disable-gpu",
+    "--single-process",
+)
 warnings.filterwarnings("ignore")
 _, adata_path = sys.argv
 adata_path = Path(adata_path)

@@ -21,4 +21,4 @@ ax = sc.pl.violin(
     multi_panel=True,
     show=False,
 )
-ax.figure.savefig("qc_metrics.png")
+ax.figure.savefig("qc_metrics.png", bbox_inches='tight')
