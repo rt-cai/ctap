@@ -1,6 +1,8 @@
-import json
 from typing import Any
 from plotly import subplots as sp, graph_objs as go
+
+# this file contains functions to create template figures
+# accumulated across different projects
 
 def BaseFigure(shape: tuple[int, int]=(1, 1), **kwargs) -> go.Figure:
     ncols, nrows = shape

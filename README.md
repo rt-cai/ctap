@@ -9,33 +9,68 @@ Transcriptomics count data provided by Wang and colleagues as part of the public
 The purpose of this pipeline is to demonstrate and automate a cell type annotation protocol using state of the art methods.
 
 ### *Dependencies*
+CTAP is completely packaged as a container. Please install **one** of the following through the provided links:
+- Docker [install guide](https://docs.docker.com/engine/install/)
+- Apptainer [install guide](https://apptainer.org/docs/admin/main/installation.html)
+
+For operating systems, only `Ubuntu` and `MacOS` were tested. Docker may enable execution of CTAP on windows, but this is untested.
 
 ### *Workflow*
 
+CTAP is broken up into 7 non-trivial steps to analyze HCMV infection using cell types. These steps are orchestrated using nextflow.
+
+<img src="./workflow.svg">
+
 # Usage
 
-### *Installation*
+All inputs, software dependencies, and reference data of CTAP are packaged in the container. The workflow is executable using a single command with *either* Apptainer or Docker ([installation instructions](#Dependencies)). In either case, the container engine will download the CTAP image and run the pipeline in the current directory.
 
-### *Requried Inputs*
+### *Apptainer*
+In a bash terminal run the following:
+```bash
+apptainer run docker://quay.io/rtcai/ctap ctap -resume
+```
+The command tells apptainer to load the docker image (`docker://`) from `quay.io/rtcai/ctap` and run the preconfigured entrypoint `ctap` **in the current working directory**. The last flag `-resume` lets nextflow look for previous runs in the current folder and continue their execution if stopped prematurely. The flag is ignored if running CTAP for the first time.
 
-### *Execution*
+### *Docker*
+In a bash terminal run the following:
+```bash
+docker run -it --rm \
+    -u $(id -u):$(id -g) \
+    --mount type=bind,source="./",target="/ws" \
+    --workdir="/ws" \  
+    quay.io/rtcai/ctap ctap -resume
+```
+Explanation of arguments:
+- `-it` specifies that ctap requires an interactive (`-i`) tty (`-t`) terminal so that nextflow's outputs are displayed correctly
+- `--rm` removes the container instance after execution (the image is retained). Docker creates a new instance of the container image each time it is used.
+- `--mount type=bind,source="./",target="/ws"` mount the current working directory (`./`) as `/ws` in the container
+- `--workdir="/ws" \` after entering the container, set the current working directoy to `/ws`
+- use the container image `quay.io/rtcai/ctap`
+- run the preconfigured entry point `ctap`
+- `-resume` lets nextflow look for previous runs in the current folder and continue their execution if stopped prematurely. If this is the first run, it is ignored.
 
-### *Expected Outputs*
-
-### *CLI Reference
+> [!NOTE]  
+> If `docker` encounters permission issues, the following may help:
+> - try `sudo docker ...` instead
+> - [follow this guide](https://docs.docker.com/engine/install/linux-postinstall/) to remove docker's root privilege requirements
+> - try apptainer
 
 # Input
 
+Single cell RNAseq count data and associated metadata were obtained from the Gene Expression Omnibus (GEO) using the accession [GSE267869](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE267869). The dataset contains 4 samples of HCMV infection in a humanized mouse model, 2 control and 2 infected. For each sample, a count matrix of cells by genes is provided. 2 accompanying dataframes provide metadata for each matrix axis. `{sample}-barcodes.tsv` identify each row as a cell using unique molecular identifier (UMI) barcodes. `{sample}-features.tsv` indicate the genes of each column by name and Ensembl ID.
 
+The compressed input files can be found in the container at `/data/GSE267869_Processed_data_files.tar.gz`. If extracted, they will be structured in the following way, where `sample` is one of: HCMV1, HCMV2, mock1, mock2. 
 ```
 GSE267869/
 ├─ {sample}-barcodes.tsv
 ├─ {sample}-features.tsv
 ├─ {sample}-matrix.mtx
 ```
-where `sample`  
 
 # Output
+
+Expected outputs 
 
 ```
 ctap_results/
@@ -45,6 +80,30 @@ ctap_results/
 ├─ umap_celltypes.png
 ├─ compare_infection.png
 ```
+
+using apptainer 
+```bash
+apptainer run docker://quay.io/rtcai/ctap example
+```
+
+or using docker
+```bash
+docker run -it --rm \
+    -u $(id -u):$(id -g) \
+    --mount type=bind,source="./",target="/ws" \
+    --workdir="/ws" \  
+    quay.io/rtcai/ctap example
+```
+
+<img src="./example_outputs/counts_distribution.png">
+the mode of counts for each gene is about 1500
+the mode of total counts for each sample is about 5000, though extreme outliers exist
+about 45% of counts for each cell belong to the same top 100 genes
+
+<img src="./example_outputs/umap_infection_vs_control.png">
+<img src="./example_outputs/umap_celltypes.png">
+<img src="./example_outputs/compare_cell_populations.png">
+
 
 # Bibliography
 

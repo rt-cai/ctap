@@ -62,4 +62,4 @@ fig = ApplyTemplate(
         font_size=14,
     ),
 )
-fig.write_image("compare_infection.png")
+fig.write_image("compare_cell_populations.png")

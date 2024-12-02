@@ -1,9 +1,10 @@
 from __future__ import annotations
-from enum import Enum
 import colorsys
 import uuid
-from attr import dataclass
 import re
+
+# this file contains utilities for working with colors
+# accumulated across different projects
 
 class PrivateInit:
     _initializer_key: str = uuid.uuid4().hex

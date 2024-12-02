@@ -10,7 +10,7 @@ process extract_hcmv {
     """
 }
 
-process load_adata_from_tables {
+process load_initial_adata {
     input:
     path raw
 
@@ -29,14 +29,14 @@ process qc {
     path adata
 
     output:
-    path "qc_metrics.png"
+    path "counts_distribution.png"
 
     """
     python ${params.steps}/${task.process}.py ${adata}
     """
 }
 
-process log_norm {
+process log_normalize_counts {
     input:
     path adata
 
@@ -57,7 +57,7 @@ process umap_embed {
 
     output:
     path "adata.${task.process}.h5ad"
-    path "umap_infection.png"
+    path "umap_infection_vs_control.png"
 
     """
     python ${params.steps}/${task.process}.py ${adata}
@@ -79,17 +79,16 @@ process predict_cell_types {
     """
 }
 
-process compare_infection {
+process compare_cell_populations {
     publishDir "$params.output", mode: 'copy', pattern: '*.png'
     
     input:
     path adata
 
     output:
-    path "compare_infection.png"
+    path "compare_cell_populations.png"
 
     """
-    export PYTHONPATH=${projectDir}:PYTHONPATH
     python ${params.steps}/${task.process}.py ${adata}
     """
 }
@@ -111,58 +110,11 @@ process publish_adata {
 
 workflow {
     raw = extract_hcmv()
-    adata = load_adata_from_tables(raw)
+    adata = load_initial_adata(raw)
     fig_qc = qc(adata)
-    adata = log_norm(adata)
+    adata = log_normalize_counts(adata)
     (adata, fig_umap) = umap_embed(adata)
     (adata, fig_celltypes) = predict_cell_types(adata)
-    fig_comp = compare_infection(adata)
+    fig_comp = compare_cell_populations(adata)
     publish_adata(adata, "adata.final")
 }
-
-
-// workflow {
-//     data_hcmv = path('https://ftp.ncbi.nlm.nih.gov/geo/series/GSE267nnn/GSE267869/suppl/GSE267869%5FProcessed%5Fdata%5Ffiles.tar.gz')
-//     def steps_path = System.getenv('CTAP_LIB')
-//     println(steps_path)
-// }
-
-// process peek {
-//     input:
-//     val x
-
-//     output:
-//     stdout
-//     """
-//     echo $params.x
-//     echo $x
-//     """
-// }
-
-// process a1 {
-//     publishDir "output", mode: 'copy'
-    
-//     output:
-//     path "out.x"
-
-//     """
-//     mkdir -p output
-//     echo "$params" > out.x
-//     """
-// }
-
-// process a2 {
-//     input:
-//     path x
-
-//     output:
-//     stdout
-
-//     """
-//     cat $x
-//     """
-// }
-
-// workflow {
-//     a1 | a2 | view
-// }

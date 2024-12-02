@@ -28,7 +28,7 @@ COPY /src /app
 ARG VERSION
 RUN echo $VERSION >/app/VERSION
 RUN echo "cp -r /example_results ./" >/usr/bin/example && chmod +x /usr/bin/example
-RUN echo "/app/docker_entry.sh \$@" >/usr/bin/run && chmod +x /usr/bin/run
+RUN echo "/app/docker_entry.sh \$@" >/usr/bin/ctap && chmod +x /usr/bin/ctap
 
 # Singularity uses tini, but raises warnings
 # we set it up here correctly for singularity
