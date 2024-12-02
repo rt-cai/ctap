@@ -6,5 +6,8 @@ dependencies:
   - nextflow=24.04
   - scanpy=1.10
   - anndata=0.10
-  - jupyter
-  - notebook
+  - decoupler-py=1.8
+  - leidenalg=0.10
+  - python-kaleido=0.2.1
+  - plotly
+  - pigz

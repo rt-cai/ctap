@@ -1,8 +1,12 @@
 /*
+**/__pycache__
+*.egg-info
 
 !/src
 !/envs
 !/lib
 
-**/__pycache__
-*.egg-info
+!/scratch/results
+!/data/GSE267869_Processed_data_files.tar.gz
+!/data/PanglaoDB.csv
+!/version.txt

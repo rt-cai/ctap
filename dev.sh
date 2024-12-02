@@ -1,8 +1,7 @@
 HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 NAME=ctap
-UTILS=$HERE/src/$NAME/utils.py
-DEV_USER=$(python $UTILS USER)
-VER=$(python $UTILS VERSION)
+DEV_USER=rtcai
+VER="$(cat $HERE/version.txt).$(git branch --show-current)-$(git rev-parse --short HEAD)"
 DOCKER_IMAGE=quay.io/$DEV_USER/$NAME
 
 # CONDA=conda
@@ -87,6 +86,7 @@ case $1 in
         docker build \
             --build-arg="CONDA_ENV=${NAME}_env" \
             --build-arg="PACKAGE=${NAME}" \
+            --build-arg="VERSION=${VER}" \
             -t $DOCKER_IMAGE:$VER .
     ;;
     -bs) # apptainer image *from docker*
@@ -125,15 +125,24 @@ case $1 in
 
     -r)
         shift
-        export PYTHONPATH=$HERE/src:$PYTHONPATH
-        python -m $NAME $@
+        mkdir -p ./scratch
+        cd ./scratch
+        SRC=../src
+        export CTAP_DATA=$HERE/data
+        export CTAP_RESULTS=$HERE/scratch/results
+        nextflow -c $SRC/main.cfg run $SRC/main.nf $@
     ;;
+    # --clean)
+    #     rm -r ./scratch
+    #     mkdir ./scratch
+    # ;;
     -rd) # docker
             # -e XDG_CACHE_HOME="/ws"\
         shift
+        mkdir -p ./scratch/docker
         docker run -it --rm \
             -u $(id -u):$(id -g) \
-            --mount type=bind,source="$HERE",target="/ws"\
+            --mount type=bind,source="$HERE/scratch/docker",target="/ws"\
             --workdir="/ws" \
             $DOCKER_IMAGE:$VER /bin/bash
     ;;
