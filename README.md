@@ -126,20 +126,14 @@ GSE267869/
 
 # Output
 
-Expected outputs can be found in this repo at `./example_outputs` and in the container at `/example_results`. For convienience, the example results folder can be exported to the current working directory using apptainer
+Expected outputs can be found in this repo at `./example_outputs` and in the container at `/example_results`. For convienience, the example results folder can be exported to the current working directory by changing `quay.io/rtcai/ctap ctap -resume` to `quay.io/rtcai/ctap example` in the [usage](#Usage) commands.
+
+For example:
 ```bash
 apptainer run docker://quay.io/rtcai/ctap example
 ```
 
-or using docker
-```bash
-docker run -it --rm \
-    -u $(id -u):$(id -g) \
-    --mount type=bind,source="./",target="/ws" \
-    --workdir="/ws" \  
-    quay.io/rtcai/ctap example
-```
-and is expected to have the following structure.
+The resulting output folder is expected to have the following structure.
 ```
 example_results/
 ├─ adata.final.h5ad
