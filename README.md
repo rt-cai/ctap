@@ -46,22 +46,56 @@ CTAP is broken up into 7 steps orchestrated by nextflow:
 
 All inputs, software dependencies, and reference data of CTAP are packaged in the container. The workflow is executable using a single command with *either* Apptainer or Docker ([installation instructions](#Dependencies)). In either case, the container engine will download the CTAP image and run the pipeline in the current directory.
 
+> [!WARNING]  
+> Please ensure you have write permissions to the directory where you will be executing CTAP.
+
+
 ### *Apptainer*
-In a bash terminal run the following:
+Apptainer only supports Linux operating systems.
+
+#### OS=Linux
+
+In a `bash` terminal run the following:
 ```bash
 apptainer run docker://quay.io/rtcai/ctap ctap -resume
 ```
+
+#### Explanation
+
 The command tells apptainer to load the docker image (`docker://`) from `quay.io/rtcai/ctap` and run the preconfigured entrypoint `ctap` **in the current working directory**. The last flag `-resume` lets nextflow look for previous runs in the current folder and continue their execution if stopped prematurely. The flag is ignored if running CTAP for the first time.
 
 ### *Docker*
-In a bash terminal run the following:
+
+#### OS=Linux
+
+In a `bash` terminal run the following:
 ```bash
 docker run -it --rm \
     -u $(id -u):$(id -g) \
     --mount type=bind,source="./",target="/ws" \
-    --workdir="/ws" \  
+    --workdir="/ws" \
     quay.io/rtcai/ctap ctap -resume
 ```
+
+#### OS=MacOSX
+
+The instructions for **OS=Unix** work for Mac as well, including in `zsh` terminals.
+
+#### OS=Windows
+
+In a `PowerShell` terminal run the following:
+```PowerShell
+docker run -it --rm `
+    --mount type=bind,source="$(convert-path ./)",target="/ws" `
+    --workdir="/ws" `
+    quay.io/rtcai/ctap ctap -resume
+```
+
+> [!NOTE]  
+> The user's home directory is protected in Windows. Consider changing the working directory before running the above command. For example: `cd ~/Documents`
+
+#### Explanation
+
 Explanation of arguments:
 - `-it` specifies that ctap requires an interactive (`-i`) tty (`-t`) terminal so that nextflow's outputs are displayed correctly
 - `--rm` removes the container instance after execution (the image is retained). Docker creates a new instance of the container image each time it is used.
